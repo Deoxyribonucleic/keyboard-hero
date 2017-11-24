@@ -2,7 +2,7 @@ package game
 
 object Main {
   def main(args: Array[String]): Unit = {
-    val game = new Game()
-    game.run()
+    val application = new Application()
+    application.run()
   }
 }

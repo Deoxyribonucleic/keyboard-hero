@@ -11,23 +11,19 @@ public class Game {
 	private static final int PENALTY_SLOW = 1;
 	private static final int MAX_PENALTY = 6;
 	
-	public Game() {
-		keyboard = new Keyboard();
-		menu = new Menu(keyboard);
-		renderer = new Renderer();
-		leaderboards = new Leaderboards("highscore.txt");
+	public Game(Keyboard keyboard, Renderer renderer, Leaderboards leaderboards) {
+		this.keyboard = keyboard;
+		this.renderer = renderer;
+		this.leaderboards = leaderboards;
 	}
 
-	public void run() {
-		String playerName = menu.askPlayerName();
-		
+	public void run(String playerName) {
 		boolean keepPlaying = true;
+		
 		while (keepPlaying) {
-			leaderboards.printTop(5);
-			
 			float survivalTime = play();
 			
-			System.out.printf("You made it for %f seconds!\n", survivalTime);
+			System.out.printf("\n\nYou made it for %f seconds!\n", survivalTime);
 			leaderboards.add(new Score(playerName, survivalTime));
 			
 			keepPlaying = askPlayAgain();
@@ -37,6 +33,8 @@ public class Game {
 	private float play() {
 		renderer.start();
 		keyboard.start();
+		
+		countdown(3);
 		
 		int penalty = 0;
 		int level = 0;
@@ -70,7 +68,7 @@ public class Game {
 			}
 			
 			// Consume and ignore input for the remaining time for this key
-			waitForNextKey(keyEnd);
+			waitFor(keyEnd);
 		}
 		
 		float survivalTime = toSeconds(System.nanoTime() - startTime);
@@ -82,10 +80,10 @@ public class Game {
 	}
 	
 	private long getKeyTime(int difficulty) {
-		return seconds(1.0f / (difficulty / 10.f + 1) * 2.0f);
+		return seconds(1.0f / (difficulty / 30.f + 1) * 2.0f);
 	}
 	
-	private void waitForNextKey(long when) {
+	private void waitFor(long when) {
 		while (System.nanoTime() < when) {
 			keyboard.read(when - System.nanoTime());
 		}
@@ -102,16 +100,25 @@ public class Game {
 		return keys.charAt(random.nextInt(keys.length()));
 	}
 	
-	private static long seconds(float s) {
+	private void countdown(int seconds) {
+		renderer.clear();
+		System.out.println("Get ready...\r");
+		while(seconds-- > 0) {
+			System.out.printf("%d... ", seconds + 1);
+			waitFor(System.nanoTime() + seconds(1));
+		}
+		renderer.clear();
+	}
+	
+	static long seconds(float s) {
 		return (long)(s * 1000000000.0f);
 	}
 	
-	private static float toSeconds(long n) {
+	public static float toSeconds(long n) {
 		return n / 1000000000.0f;
 	}
 
 	private Keyboard keyboard;
-	private Menu menu;
 	private Renderer renderer;
 	private Leaderboards leaderboards;
 	

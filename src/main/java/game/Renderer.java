@@ -11,6 +11,9 @@ public class Renderer {
 	private static final String HIDE_CURSOR = "?25l";
 	private static final String SHOW_CURSOR = "?25h";
 
+	private static final String HOME = "1;1H";
+	private static final String ERASE = "J";
+
 	private static String escape(String seq) {
 		return String.format("\u001b[%s", seq);
 	}
@@ -25,7 +28,7 @@ public class Renderer {
 	}
 	
 	public void stop() {
-		System.out.println(escape(SHOW_CURSOR) + escape(RESET));
+		System.out.print(escape(SHOW_CURSOR) + escape(RESET));
 	}
 
 	public void wrong() {
@@ -38,6 +41,21 @@ public class Renderer {
 
 	public void correct() {
 		System.out.printf("%s%c", escape(GREEN), last);
+	}
+	
+	public void clear() {
+		System.out.print(escape(HOME) + escape(ERASE));
+	}
+	
+	public void reset() {
+		System.out.print(escape(RESET));
+	}
+	
+	public void titleEffect(String title, int x) {
+		System.out.print(escape(WHITE));
+		for(int i=0; i<title.length(); ++i) {
+			System.out.printf("%s%c", escape(((i + x) % 2 == 0) ? RED : GREEN), title.charAt(i));
+		}
 	}
 
 	private char last;

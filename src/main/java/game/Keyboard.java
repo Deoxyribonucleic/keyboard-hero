@@ -29,6 +29,12 @@ public class Keyboard {
 		}
 	}
 	
+	public void waitFor(char c) {
+		start();
+		while(read(Game.seconds(1.0f)) != c) { }
+		stop();
+	}
+	
 	public void start() {
 		// Switch terminal to raw mode.
 		Util.command("stty raw -echo");

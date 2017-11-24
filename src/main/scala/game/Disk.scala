@@ -7,7 +7,7 @@ object Disk {
       val writer = new java.io.PrintWriter(new java.io.File(filename));
       
       for (Score(name, score) <- entries) {
-        writer.println(s"$name $score")
+        writer.println(s"${name.filterNot(_.isWhitespace)} $score")
       }
       
       writer.close();

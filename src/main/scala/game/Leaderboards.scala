@@ -12,10 +12,10 @@ class Leaderboards(filename: String) {
   def top(n: Int): Seq[Score] = entries.sortBy(-_.score).take(n)
   def top(n: Int, player: String) = entries.filter(_.name == player).sortBy(-_.score).take(n)
   
-  def printTop(n: Int) {
-    println("LEADERBOARDS")
-    for((Score(name, score), i) <- top(n).zipWithIndex) {
-      println(s"$i. $name - $score seconds")
+  def print(entries: Seq[Score]) {
+    println("LEADERBOARDS\n")
+    for((Score(name, score), i) <- entries.zipWithIndex) {
+      println(s"${i + 1}. $name - $score seconds")
     }
   }
 }
