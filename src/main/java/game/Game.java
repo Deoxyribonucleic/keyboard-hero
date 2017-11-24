@@ -5,22 +5,31 @@ import java.util.Scanner;
 
 
 public class Game {
-	private final char ESCAPE = 27;
+	private static final char ESCAPE = 27;
 	
-	private final int PENALTY_WRONG = 2;
-	private final int PENALTY_SLOW = 1;
-	private final int MAX_PENALTY = 6;
+	private static final int PENALTY_WRONG = 2;
+	private static final int PENALTY_SLOW = 1;
+	private static final int MAX_PENALTY = 6;
 	
 	public Game() {
 		keyboard = new Keyboard();
+		menu = new Menu(keyboard);
 		renderer = new Renderer();
+		leaderboards = new Leaderboards("highscore.txt");
 	}
 
 	public void run() {
+		String playerName = menu.askPlayerName();
+		
 		boolean keepPlaying = true;
 		while (keepPlaying) {
+			leaderboards.printTop(5);
+			
 			float survivalTime = play();
+			
 			System.out.printf("You made it for %f seconds!\n", survivalTime);
+			leaderboards.add(new Score(playerName, survivalTime));
+			
 			keepPlaying = askPlayAgain();
 		}
 	}
@@ -102,7 +111,9 @@ public class Game {
 	}
 
 	private Keyboard keyboard;
+	private Menu menu;
 	private Renderer renderer;
+	private Leaderboards leaderboards;
 	
 	private static String keys = "abcdefghijklmnopqrstuvwxyz"; //ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 }
