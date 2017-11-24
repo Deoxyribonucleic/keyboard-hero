@@ -8,15 +8,14 @@ public class Keyboard {
 		reader = System.console().reader();
 	}
 
-	public char read(float timeout) {
-		long nanoTimeout = (long)(timeout * 1000000000);
+	public char read(long timeout) {
 		long startTime = System.nanoTime();
 
 		while (true) {
 			try {
 				while (!reader.ready()) {
-					if (System.nanoTime() - startTime > nanoTimeout) {
-						return 'T';
+					if (System.nanoTime() - startTime > timeout) {
+						return (char)-2;
 					}
 				}
 
@@ -29,7 +28,7 @@ public class Keyboard {
 			}
 		}
 	}
-
+	
 	public void start() {
 		// Switch terminal to raw mode.
 		Util.command("stty raw -echo");
@@ -38,6 +37,10 @@ public class Keyboard {
 	public void stop() {
 		// Switch terminal back to buffered (cooked) mode.
 		Util.command("stty cooked echo");
+	}
+	
+	public boolean isTimeout(char c) {
+		return c == (char)-2;
 	}
 
 	private Reader reader;
